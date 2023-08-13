@@ -22,13 +22,26 @@ public_users.post("/register", (req,res) => {
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
-    res.send(JSON.stringify(books,null,4));
+    let getPromis = new Promise((resolve,reject) => {
+        resolve(res.send(JSON.stringify(books,null,4)))
+    });
+    getPromis.then((successmessage) => {
+        console.log("stuff" + successmessage);
+    })
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
     const isbn = req.params.isbn;
-    res.send(JSON.stringify(books[isbn],null,4));
+    let isbnPromise = new Promise((resolve,reject) => {
+        resolve(res.send(JSON.stringify(books[isbn],null,4)))
+    })
+    isbnPromise.then((successmessage) => {
+        console.log("success message:" + successmessage);
+    });
+    isbnPromise.catch((errormessage) => {
+        console.log("error message:" + errormessage);
+    });
  });
   
 // Get book details based on author
@@ -41,23 +54,44 @@ public_users.get('/author/:author',function (req, res) {
     for (i=1;i<=key_len;i++){
         if (books[i].author === author){
             new_dict[i] = books[i];
-            new_key++;
+            //new_key++; Not sure why this is here. After commenting out, loop works fine.
         }
     }
 
-    res.send(new_dict);
+    authorPromise = new Promise((resolve,reject) => {
+        resolve(res.send(new_dict))
+    });
+
+    authorPromise.then((successmessage) => {
+        console.log("success message:" + successmessage);
+    });
+
+    authorPromise.catch((errormessage) => {
+        console.log("error message:" + errormessage);
+    });
+    
 });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
     const title = req.params.title;
     let key_len = Object.keys(books).length;
-    
-    for (i=1;i<=key_len;i++){
-        if(books[i].title === title) {
-            res.send(JSON.stringify(books[i],null,4));
+
+    titlePromise = new Promise((resolve, reject) => {
+        for (i=1;i<=key_len;i++){
+            if(books[i].title === title) {
+                res.send(JSON.stringify(books[i],null,4));
+            }
         }
-    }
+    });
+    
+    titlePromise.then((successmessage) => {
+        console.log("success message" + successmessage);
+    });
+
+    titlePromise.catch((errormessage) => {
+        console.log("error message" + errormessage);
+    });
 });
 
 //  Get book review
